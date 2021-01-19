@@ -35,6 +35,7 @@ printGameState (GameState state) =  mapM_
                                   (putStrLn . map (\y->if Point y `elem`  state then '#' else '.')) 
                                   (groupBy (\x y->fst x==fst y) fullRange)
   where fullRange = [(x,y) | x <- [minXY..maxXY], y<- [minXY..maxXY]]
-        minXY = minimum $ concatMap (\(Point (i,j))->[i,j]) state
-        maxXY = maximum $ concatMap (\(Point (i,j))->[i,j]) state
+        flatPoints = concatMap (\(Point (i,j))->[i,j]) state
+        minXY = minimum flatPoints
+        maxXY = maximum flatPoints
 
