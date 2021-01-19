@@ -1,11 +1,12 @@
 module Lib
     (  tick
       ,lives
+      ,printGameState
       ,GameState(..)
       ,Point(..)
     ) where
 
-import Data.List (nub)
+import Data.List (nub,groupBy)
 
 newtype GameState = GameState [Point] deriving (Show,Eq)
 newtype Point = Point (Int,Int) deriving (Show,Eq,Ord)
@@ -28,4 +29,12 @@ lives point (GameState state)
 tick :: GameState -> GameState
 tick (GameState gamestate) = GameState (filter (\y -> lives y (GameState gamestate)) gameStateAndAdjacent)
   where gameStateAndAdjacent = nub $ gamestate ++ concatMap adjacent gamestate
+
+printGameState :: GameState -> IO()
+printGameState (GameState state) =  mapM_ 
+                                  (putStrLn . map (\y->if Point y `elem`  state then '#' else '.')) 
+                                  (groupBy (\x y->fst x==fst y) fullRange)
+  where fullRange = [(x,y) | x <- [minXY..maxXY], y<- [minXY..maxXY]]
+        minXY = minimum $ concatMap (\(Point (i,j))->[i,j]) state
+        maxXY = maximum $ concatMap (\(Point (i,j))->[i,j]) state
 
